@@ -2,8 +2,6 @@
 package osc
 
 import (
-	"fmt"
-	"os"
 	"strconv"
 
 	osc2 "github.com/hypebeast/go-osc/osc"
@@ -15,8 +13,7 @@ import (
 // and values after that.
 func Send(args []string) error {
 	if len(args) < 4 {
-		fmt.Fprintln(os.Stderr, "Usage: osc send <host> <port> <address> <values>")
-		return nil
+		return errors.New("usage: osc send <host> <port> <address> <values>")
 	}
 	port, err := strconv.Atoi(args[1])
 	if err != nil {
@@ -45,17 +42,20 @@ func Send(args []string) error {
 	return nil
 }
 
-// Receive OSC messages at a specific host and port.
+// Receive OSC messages at a specific host and port and print the message.
 // Host should be a local interface.
-func Receive(args []string) error {
+// The callbacks are for testing currently.
+func Receive(args []string, callbacks ...func(*osc2.Message)) error {
 	if len(args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: osc receive <host> <port>")
-		return nil
+		return errors.New("usage: osc receive <host> <port>")
 	}
 	server := &osc2.Server{Addr: args[0] + ":" + args[1]}
 
 	server.Handle("*", func(msg *osc2.Message) {
 		osc2.PrintMessage(msg)
+		for _, callback := range callbacks {
+			callback(msg)
+		}
 	})
 
 	if err := server.ListenAndServe(); err != nil {
