@@ -1,5 +1,7 @@
 # controol
 
+[![Build Status](https://travis-ci.org/wustenberg/controol.svg?branch=master)](https://travis-ci.org/wustenberg/controol)
+
 `controol` is a small control tool to work with OSC and MIDI messages.
 
 ## Usage
